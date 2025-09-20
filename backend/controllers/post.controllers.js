@@ -66,9 +66,13 @@ export const comment = async (req, res) => {
         let postId = req.params.id;
         let userId =req.userId;
         let {content} = req.body;
-          
         
+        let post = await Post.findByIdAndUpdate(postId, {
+            $push : {comment:{content, user:userId}}
+        }, {new: true})
+        .populate("comment.user", "firstName lastName profileImage hedline")
+        return res.status(200).json(post)
     } catch (error) {
-        
+         return res.status(500).json({message:"comment error", error})
     }
 }
