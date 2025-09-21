@@ -42,7 +42,7 @@ function UserContext({children}) {
     getPost()
   }, [])
 
-  const value = { userData, setUserData, edit, setEdit, postData, setPostData }
+  const value = { userData, setUserData, edit, setEdit, postData, setPostData, getPost }
 
   return (
     <div>
