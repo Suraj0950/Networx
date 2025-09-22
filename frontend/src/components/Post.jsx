@@ -15,26 +15,35 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
   
   let {serverUrl} = useContext(authDataContext)
   let {userData, setUserData, getPost} = useContext(userDataContext)
-  let [likes,setLikes] = useState( like || [] )
+  let [likes,setLikes] = useState(like || [])
 
-  const handleLike = async ()=>{
-    try {
-      let result = await axios.get(serverUrl + `/api/post/like/${id}`, 
-        {withCredentials:true})
-        setLikes(result.data.likes)
-    } catch (error) {
-      console.log(error)
+  const handleLike = async () => {
+  try {
+    // Optimistic UI update first
+    if (likes.includes(userData._id)) {
+      // user already liked → remove like locally
+      setLikes(prev => prev.filter(id => id !== userData._id));
+    } else {
+      // user not liked → add like locally
+      setLikes(prev => [...prev, userData._id]);
     }
+
+    // then update backend
+    await axios.get(`${serverUrl}/api/post/like/${id}`, { withCredentials: true });
+  } catch (error) {
+    console.log(error);
   }
+};
+
 
   useEffect(()=>{
     getPost()
-  },[likes, setLikes])
+  },[])
 
   return (
     // MAIN DIV OF POST
     <div className='w-full min-h-[200px] bg-white rounded-lg p-[20px] gap-[20px] flex flex-col'>
-        {/* Name and profile div */}
+      {/* Name and profile div */}
       <div className='flex justify-between items-center'>
         <div className='flex justify-centre items-center gap-[10px]'>
           <div className="w-[52px] h-[52px] overflow-hidden rounded-full flex items-center justify-centre"> 
@@ -46,7 +55,7 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
             <div className="text-[10px]">{moment(createdAt).fromNow()}</div>
           </div>
         </div>
-
+ 
         <div>
           {/* button */}
         </div>
@@ -65,11 +74,10 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
       {/* LIKE & COMMENT DIV */}
       <div>
         
-        {/* Users like and comment div */}
+        {/* SHowing result for like and comment div */}
 
         <div className='w-full flex justify-between items-center p-[20px] border-b-1 border-gray-500'>
-          <div className='flex items-center justify-center gap-[5px] text-[18px]'
-          onClick={handleLike}>
+          <div className='flex items-center justify-center gap-[5px] text-[18px]'>
             <BiLike className='text-[#3bccf9] w-[22px] h-[22px] cursor-pointer'/><span>{likes.length}</span>
           </div>
 
@@ -77,12 +85,19 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
             <FaRegCommentDots className=' w-[20px] h-[20px] cursor-pointer'/><span>{comment.length}</span></div>
         </div>
 
-        {/* Author like and comment div */}
+        {/* Author doing like and comment div */}
         <div className='w-full flex items-center p-[20px] gap-[20px] '>
-          <div>
-            <BiLike className=' w-[22px] h-[22px] cursor-pointer'/>
-            <span>like</span>
-          </div>
+
+          {!likes.includes(userData._id) &&  <div  onClick={handleLike}>
+            <BiLike className=' w-[22px] h-[22px] cursor-pointer text-[#0077ff]'/>
+            <span>Like</span>
+          </div>}
+
+          {likes.includes(userData._id) &&  <div  onClick={handleLike}>
+            <BiSolidLike className=' w-[22px] h-[22px] cursor-pointer text-[#0077ff]'/>
+            <span>Liked</span>
+          </div>}
+          
           
           <div>
             <FaRegCommentDots className=' w-[22px] h-[22px] cursor-pointer'/><span>comment</span>
