@@ -7,7 +7,7 @@ import { FaRegCommentDots } from "react-icons/fa6";
 import { authDataContext } from '../context/AuthContext';
 import axios from "axios";
 import { userDataContext } from '../context/UserContext';
-
+import { TbSend2 } from "react-icons/tb";
 
 function Post({id, author = {},comment = [],description = "",image = "",createdAt = new Date(),like = [] }) {
 
@@ -82,7 +82,8 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
           </div>
 
           <div className='flex items-center justify-center gap-[5px] text-[18px]'>
-            <FaRegCommentDots className=' w-[20px] h-[20px] cursor-pointer'/><span>{comment.length}</span></div>
+            <FaRegCommentDots className=' w-[20px] h-[20px] cursor-pointer'/><span>{comment.length}</span>
+          </div>
         </div>
 
         {/* Author doing like and comment div */}
@@ -100,8 +101,24 @@ function Post({id, author = {},comment = [],description = "",image = "",createdA
           
           
           <div>
-            <FaRegCommentDots className=' w-[22px] h-[22px] cursor-pointer'/><span>comment</span>
+            <FaRegCommentDots className=' w-[22px] h-[22px] cursor-pointer'/>
+            <span>comment</span>
+          </div>  
+        </div>
+
+        {/* leave a comment wala div */}
+        <div>
+          <form className='w-full flex justify-between items-center border-b-2 border-b-gray-200 p-[10px]'>
+            <input type='text' placeholder={"leave a comment "} className='outline-none border-none'/>
+            <button><TbSend2 className='w-[22px] h-[22px] text-[rgb(0,238,255)]'/></button>
+          </form>
+
+          {/* div for comment map */}
+          <div>
+            
           </div>
+
+
         </div>
 
       </div>
