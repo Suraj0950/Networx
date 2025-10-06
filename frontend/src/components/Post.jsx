@@ -45,15 +45,18 @@ function Post({
   // ✅ FIXED: used commentContent 
   const handleComment = async (e) => {
     e.preventDefault()
+    if (!commentContent.trim()) return; // 🔒 prevent blank comment
+
     try {
-      let result = await axios.post(`${serverUrl}/api/post/comment/${id}`, {
-        content: commentContent      
-      }, { withCredentials: true })
-      setComments(result.data.comment)
-      console.log(result.data.comment)
+      let result = await axios.post(
+        `${serverUrl}/api/post/comment/${id}`,
+        {content: commentContent},
+        { withCredentials: true })
+      setComments(result.data?.comment || [])
+      console.log(result.data)
       setCommentContent("")          
     } catch (error) {
-      console.log(error)
+      console.log("Comment error", error)
     }
   }
 
